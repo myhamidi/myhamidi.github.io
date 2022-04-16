@@ -12,9 +12,11 @@ const reader = new FileReader();
 
 const ecsvFile1 = document.getElementById("ecsvFile1");
 const ecsvFile2 = document.getElementById("ecsvFile2");
+const ecsvDivOut1 = document.getElementById("ecsvDivOut1");
+const ecsvDivOut2 = document.getElementById("ecsvDivOut2");
 
-var csv1 = 0;
-var csv2 = 0;
+var ecsv1 = 0;
+var ecsv2 = 0;
 var activeCSV = 0;
 
 // ################################################################
@@ -42,7 +44,7 @@ function Load() {
   }
 
 function Loadend() {
-    eval("csv" + activeCSV + " = new clsCSV(reader.result)")
+    eval("ecsv" + activeCSV + " = new clsCSV(reader.result)")
   }
 
 // ################################################################
@@ -58,6 +60,13 @@ class clsCSV {
         for (let row of rows) {
             let tmp = row.split(delimiter)
             this.data.push(tmp)}
+    }
+
+    print(divID, mode = "full") {
+        ecsvDivOut1.innerText+= ecsv1.headers + "\n" 
+        for (let row of ecsv1.data) {
+            ecsvDivOut1.innerText+= row + "\n" 
+        }
     }
 
 }
