@@ -1,7 +1,8 @@
 
 // const myForm1 = document.getElementById("forminput1");
 // const myForm2 = document.getElementById("forminput2");
-
+// var csvText1 = "";
+// var csvText2 = ""; 
 // EASY CSV
 
 // ################################################################
@@ -12,8 +13,8 @@ const reader = new FileReader();
 const ecsvFile1 = document.getElementById("ecsvFile1");
 const ecsvFile2 = document.getElementById("ecsvFile2");
 
-var csvText1 = ""; var csv1 = 0;
-var csvText2 = ""; var csv2 = 0;
+var csv1 = 0;
+var csv2 = 0;
 var activeCSV = 0;
 
 // ################################################################
@@ -31,17 +32,17 @@ ecsvFile2.onchange = () => {
 }
 
 function ReadFile (file) {
-    reader.addEventListener("load", Load);
+    // reader.addEventListener("load", Load);
     reader.addEventListener("loadend", Loadend);
     reader.readAsText(file);
   }
 
 function Load() {
-    eval("csvText" + activeCSV + " = reader.result;")
+    // things that shall happen when reader is loaded
   }
 
 function Loadend() {
-    eval("csv" + activeCSV + " = new clsCSV(csvText" + activeCSV + ")")
+    eval("csv" + activeCSV + " = new clsCSV(reader.result)")
   }
 
 // ################################################################

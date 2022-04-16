@@ -17,23 +17,23 @@ class clsTest {
     //         test_passed(name)}
     // }
 
-    test_CSVFile() {
-        name = "CSVFile"
-        var res = ecsvFile1 == undefined || ecsvFile2 == undefined
-        if (res) {
-            test_failed(name)}
-        else {
-            test_passed(name)}
-    }
+    // test_CSVFile() {
+    //     name = "CSVFile"
+    //     var res = ecsvFile1 == undefined || ecsvFile2 == undefined
+    //     if (res) {
+    //         test_failed(name)}
+    //     else {
+    //         test_passed(name)}
+    // }
 
-    test_LoadCSV1() {
-        name = "LoadCSV 1"
-        var res = csvText1 != "" || csvText2 != ""
-        if (res) {
-            test_passed(name)}
-        else {
-            test_failed(name)}
-    }
+    // test_LoadCSV1() {
+    //     name = "LoadCSV 1"
+    //     var res = csvText1 != "" || csvText2 != ""
+    //     if (res) {
+    //         test_passed(name)}
+    //     else {
+    //         test_failed(name)}
+    // }
 
     test_LoadCSV2() {
         name = "LoadCSV 2"
