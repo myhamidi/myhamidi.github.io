@@ -58,16 +58,49 @@ class clsCSV {
         this.data = [];
         const rows = str.slice(str.indexOf("\n") + 1).split("\n");
         for (let row of rows) {
-            let tmp = row.split(delimiter)
-            this.data.push(tmp)}
-    }
-
-    print(divID, mode = "full") {
-        ecsvDivOut1.innerText+= ecsv1.headers + "\n" 
-        for (let row of ecsv1.data) {
-            ecsvDivOut1.innerText+= row + "\n" 
+            if (this._IsValidRow(row)) {
+                let tmp = row.split(delimiter)
+                this.data.push(tmp)}
         }
     }
 
-}
+    print(divID, mode = "full") {
+      ecsvDivOut1.innerHTML += this._AsHTMLTable()
 
+    }
+
+    _IsValidRow(row) {
+      if (row == "") {
+        return false}
+      return true;
+    }
+
+    _AsHTMLTable() {
+        // table
+        let ret = '<table class="table">';
+        //header body
+        ret += '<thead><tr>'
+        // headers
+        for (let header of this.headers) {
+          ret += '<th>' + header + '</th>'
+        }
+        // header body end 
+        ret += '</tr></thead>'
+        //row body
+        ret += '<tbody>'
+        //rows
+        for (let row of this.data) {
+          ret += '<tr>'
+          for (let cell of row) {
+            ret += '<td>' + cell + '</td>'
+          }
+          ret += '</tr>'
+        }
+        // row body end
+        ret += '</tbody>'
+        // table end
+        ret += '</table>'
+
+        return ret;
+    }
+}
