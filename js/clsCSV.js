@@ -65,6 +65,7 @@ class clsCSV {
     }
 
     print(divID, mode = "full") {
+      ecsvDivOut1.innerHTML += this._Table_Config()
       ecsvDivOut1.innerHTML += this._AsHTMLTable()
 
     }
@@ -82,7 +83,7 @@ class clsCSV {
         ret += '<thead><tr>'
         // headers
         for (let header of this.headers) {
-          ret += '<th>' + header + '</th>'
+          ret += '<th class="col-' + header + '">' + header + '</th>'
         }
         // header body end 
         ret += '</tr></thead>'
@@ -90,9 +91,11 @@ class clsCSV {
         ret += '<tbody>'
         //rows
         for (let row of this.data) {
-          ret += '<tr>'
+          var i = -1;
+          ret += '<tr>';
           for (let cell of row) {
-            ret += '<td>' + cell + '</td>'
+            i += 1;
+            ret += '<td class="col-' + this.headers[i] + '">' + cell + '</td>'
           }
           ret += '</tr>'
         }
@@ -103,4 +106,23 @@ class clsCSV {
 
         return ret;
     }
-}
+
+    _Table_Config() {
+      let ret = '';
+      for (let header of this.headers) {
+        let strr = "ecsv1._Table_ToggleCol('col-" + header + "')"
+        ret += '<a id="configheader-' + header + '" href="#" onclick="' + strr + '">' + header + '</a>' + ' . '}
+      return ret;
+    }
+
+    _Table_ToggleCol(colname) {
+      var cols = document.getElementsByClassName(colname);
+      for (let col of cols) {
+          if (col.style.display === "table-cell") {
+            col.style.display = "none";
+          } else {
+            col.style.display = "table-cell";
+          }
+        }
+    }
+  }
