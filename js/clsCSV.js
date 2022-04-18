@@ -65,8 +65,9 @@ class clsCSV {
     }
 
     print(divID, mode = "full") {
-      ecsvDivOut1.innerHTML += this._Table_Config1()
-      ecsvDivOut1.innerHTML += this._Table_Config2()
+      ecsvDivOut1.innerHTML += this._Table_ConfigDispalay()
+      ecsvDivOut1.innerHTML += this._Table_ConfigLink()
+      ecsvDivOut1.innerHTML += this._Table_ConfigImg()
       ecsvDivOut1.innerHTML += this._AsHTMLTable()
       this._Style_Add_Display("ecsvtable", "table-cell")
     }
@@ -108,7 +109,7 @@ class clsCSV {
         return ret;
     }
 
-    _Table_Config1() {
+    _Table_ConfigDispalay() {
       let ret = 'Show/Hide: ';
       for (let header of this.headers) {
         let strr = "ecsv1._Table_ToggleCol('col-" + header + "')"
@@ -116,10 +117,18 @@ class clsCSV {
       return ret + "<br/>";
     }
 
-    _Table_Config2() {
+    _Table_ConfigLink() {
       let ret = 'Link: ';
       for (let header of this.headers) {
         let strr = "ecsv1._Table_ToggleLink('col-" + header + "')"
+        ret += '<a id="configlink-' + header + '" href="#" onclick="' + strr + '">' + header + '</a>' + ' . '}
+      return ret + "<br/>";
+    }
+
+    _Table_ConfigImg() {
+      let ret = 'Image: ';
+      for (let header of this.headers) {
+        let strr = "ecsv1._Table_ToggleImg('col-" + header + "')"
         ret += '<a id="configimg-' + header + '" href="#" onclick="' + strr + '">' + header + '</a>' + ' . '}
       return ret + "<br/>";
     }
@@ -137,9 +146,15 @@ class clsCSV {
 
     _Table_ToggleLink(colname) {
       var cells = document.getElementsByClassName("ecsvcell " + colname);
-      a = 1
       for (let cell of cells) {
           cell.innerHTML = this._InnerHTML_ToggleToLink(cell);
+        }
+    }
+
+    _Table_ToggleImg(colname) {
+      var cells = document.getElementsByClassName("ecsvcell " + colname);
+      for (let cell of cells) {
+          cell.innerHTML = this._InnerHTML_ToggleToLImg(cell);
         }
     }
 
@@ -155,5 +170,12 @@ class clsCSV {
             return cell.innerText}
         else {
             return '<a href="' + cell.innerText +'">' + cell.innerText + '</a>'}
+    }
+
+    _InnerHTML_ToggleToLImg(cell) {
+      if (cell.innerHTML.includes("<img src=")){
+          return cell.innerHTML.slice(cell.innerHTML.indexOf('src="')+5,cell.innerHTML.indexOf('"></a>'))}
+      else {
+          return '<a href="' + cell.innerText +'"><img src="' + cell.innerText + '" height="80"></a>'}
     }
   }
