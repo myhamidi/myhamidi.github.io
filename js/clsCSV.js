@@ -65,7 +65,8 @@ class clsCSV {
     }
 
     print(divID, mode = "full") {
-      ecsvDivOut1.innerHTML += this._Table_Config()
+      ecsvDivOut1.innerHTML += this._Table_Config1()
+      ecsvDivOut1.innerHTML += this._Table_Config2()
       ecsvDivOut1.innerHTML += this._AsHTMLTable()
       this._Style_Add_Display("ecsvtable", "table-cell")
     }
@@ -95,7 +96,7 @@ class clsCSV {
           ret += '<tr>';
           for (let cell of row) {
             i += 1;
-            ret += '<td class="ecsvtable col-' + this.headers[i] + '">' + cell + '</td>'
+            ret += '<td class="ecsvtable col-' + this.headers[i] + ' ecsvcell">' + cell + '</td>'
           }
           ret += '</tr>'
         }
@@ -107,12 +108,20 @@ class clsCSV {
         return ret;
     }
 
-    _Table_Config() {
-      let ret = '';
+    _Table_Config1() {
+      let ret = 'Show/Hide: ';
       for (let header of this.headers) {
         let strr = "ecsv1._Table_ToggleCol('col-" + header + "')"
         ret += '<a id="configheader-' + header + '" href="#" onclick="' + strr + '">' + header + '</a>' + ' . '}
-      return ret;
+      return ret + "<br/>";
+    }
+
+    _Table_Config2() {
+      let ret = 'Link: ';
+      for (let header of this.headers) {
+        let strr = "ecsv1._Table_ToggleLink('col-" + header + "')"
+        ret += '<a id="configimg-' + header + '" href="#" onclick="' + strr + '">' + header + '</a>' + ' . '}
+      return ret + "<br/>";
     }
 
     _Table_ToggleCol(colname) {
@@ -126,10 +135,25 @@ class clsCSV {
         }
     }
 
+    _Table_ToggleLink(colname) {
+      var cells = document.getElementsByClassName("ecsvcell " + colname);
+      a = 1
+      for (let cell of cells) {
+          cell.innerHTML = this._InnerHTML_ToggleToLink(cell);
+        }
+    }
+
     _Style_Add_Display(classname, style) {
       var elements = document.getElementsByClassName(classname);
       for (let e of elements) {
           e.style.display = style;
         }
+    }
+
+    _InnerHTML_ToggleToLink(cell) {
+        if (cell.innerHTML.includes("<a href=")){
+            return cell.innerText}
+        else {
+            return '<a href="' + cell.innerText +'">' + cell.innerText + '</a>'}
     }
   }
