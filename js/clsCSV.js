@@ -67,7 +67,7 @@ class clsCSV {
     print(divID, mode = "full") {
       ecsvDivOut1.innerHTML += this._Table_Config()
       ecsvDivOut1.innerHTML += this._AsHTMLTable()
-
+      this._Style_Add_Display("ecsvtable", "table-cell")
     }
 
     _IsValidRow(row) {
@@ -83,7 +83,7 @@ class clsCSV {
         ret += '<thead><tr>'
         // headers
         for (let header of this.headers) {
-          ret += '<th class="col-' + header + '">' + header + '</th>'
+          ret += '<th class="ecsvtable col-' + header + '">' + header + '</th>'
         }
         // header body end 
         ret += '</tr></thead>'
@@ -95,7 +95,7 @@ class clsCSV {
           ret += '<tr>';
           for (let cell of row) {
             i += 1;
-            ret += '<td class="col-' + this.headers[i] + '">' + cell + '</td>'
+            ret += '<td class="ecsvtable col-' + this.headers[i] + '">' + cell + '</td>'
           }
           ret += '</tr>'
         }
@@ -123,6 +123,13 @@ class clsCSV {
           } else {
             col.style.display = "table-cell";
           }
+        }
+    }
+
+    _Style_Add_Display(classname, style) {
+      var elements = document.getElementsByClassName(classname);
+      for (let e of elements) {
+          e.style.display = style;
         }
     }
   }
