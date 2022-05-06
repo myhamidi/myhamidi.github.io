@@ -10,32 +10,25 @@
 // ################################################################
 const reader = new FileReader();
 
-const ecsvFile1 = document.getElementById("ecsvFile1");
-const ecsvFile2 = document.getElementById("ecsvFile2");
-const ecsvDivOut1 = document.getElementById("ecsvDivOut1");
-const ecsvDivOut2 = document.getElementById("ecsvDivOut2");
+const ecsvFile = document.getElementById("ecsvFile");
+const ecsvDivOut = document.getElementById("ecsvDivOut");
 
 var ecsv1 = 0;
-var ecsv2 = 0;
 var activeCSV = 0;
 
 // ################################################################
 // Event when loading file                                        #
 // ################################################################
 
-ecsvFile1.onchange = () => {
+ecsvFile.onchange = () => {
   activeCSV = 1;
-  ReadFile(ecsvFile1.files[0])
+  ReadFile(ecsvFile.files[0])
 }
 
-ecsvFile2.onchange = () => {
-  activeCSV = 2;
-  ReadFile(ecsvFile2.files[0])
-}
 
 function ReadFile (file) {
     // reader.addEventListener("load", Load);
-    reader.addEventListener("loadend", Loadend);
+    reader.addEventListener("loadend", CreateNewECSV);
     reader.readAsText(file);
   }
 
@@ -43,8 +36,10 @@ function Load() {
     // things that shall happen when reader is loaded
   }
 
-function Loadend() {
-    eval("ecsv" + activeCSV + " = new clsCSV(reader.result)")
+function CreateNewECSV() {
+    ecsv1 = new clsCSV(reader.result);
+    ecsv1.print();
+    // eval("ecsv" + activeCSV + " = new clsCSV(reader.result)") case formultiple
   }
 
 // ################################################################
@@ -53,6 +48,7 @@ function Loadend() {
 
 class clsCSV {
     constructor(csvtext, delimiter = ";") {
+        // GetCSV Data
         var str = csvtext.replace(new RegExp('\r\n', "g") , '\n')
         this.headers = str.slice(0, str.indexOf("\n")).split(delimiter);
         this.data = [];
@@ -62,13 +58,21 @@ class clsCSV {
                 let tmp = row.split(delimiter)
                 this.data.push(tmp)}
         }
+        // Add Config and Table Div
+        let configDiv = document.createElement('div');
+        configDiv.id = "ecsv-Config"
+        let tableDiv = document.createElement('div');
+        tableDiv.id = "ecsv-Table"
+
+        ecsvDivOut.appendChild(configDiv)
+        ecsvDivOut.appendChild(tableDiv)
     }
 
-    print(divID, mode = "full") {
-      ecsvDivOut1.innerHTML += this._Table_ConfigDispalay()
-      ecsvDivOut1.innerHTML += this._Table_ConfigLink()
-      ecsvDivOut1.innerHTML += this._Table_ConfigImg()
-      ecsvDivOut1.innerHTML += this._AsHTMLTable()
+    print( mode = "full") {
+      ecsvDivOut.innerHTML += this._Table_ConfigDispalay()
+      ecsvDivOut.innerHTML += this._Table_ConfigLink()
+      ecsvDivOut.innerHTML += this._Table_ConfigImg()
+      ecsvDivOut.innerHTML += this._AsHTMLTable()
       this._Style_Add_Display("ecsvtable", "table-cell")
     }
 
@@ -149,6 +153,7 @@ class clsCSV {
       for (let cell of cells) {
           cell.innerHTML = this._InnerHTML_ToggleToLink(cell);
         }
+
     }
 
     _Table_ToggleImg(colname) {
@@ -178,4 +183,22 @@ class clsCSV {
       else {
           return '<a href="' + cell.innerText +'"><img src="' + cell.innerText + '" height="80"></a>'}
     }
+  }
+
+
+  // ###############################################################################
+  // Load and Save                                                                 #
+  // ###############################################################################
+
+  function download(filename, text) {
+    var pom = document.createElement('a');
+    pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    pom.setAttribute('download', filename);
+  
+    pom.style.display = 'none';
+    document.body.appendChild(pom);
+  
+    pom.click();
+  
+    document.body.removeChild(pom);
   }
