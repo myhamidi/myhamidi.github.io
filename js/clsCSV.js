@@ -113,6 +113,23 @@ class clsCSV {
         return ret;
     }
 
+    _AsCSV(sep = ";") {
+        let ret = '';
+        // headers
+        for (let header of this.headers) {
+            ret += header + ';'}
+        ret = ret.slice(0, -1)
+        ret += "\n"
+        //rows
+        for (let row of this.data) {
+            for (let cell of row) {
+                ret += cell + ';'}
+            ret = ret.slice(0, -1)
+            ret += "\n"
+        }
+        return ret;
+  }
+
     _Table_ConfigDispalay() {
       let ret = 'Show/Hide: ';
       for (let header of this.headers) {
@@ -201,4 +218,10 @@ class clsCSV {
     pom.click();
   
     document.body.removeChild(pom);
+  }
+
+  function download_save() {
+    let filename = ecsvFile.value.split("\\").slice(-1)[0]
+    let text = ecsv1._AsCSV()
+    download(filename, text)
   }
