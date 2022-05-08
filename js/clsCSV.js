@@ -12,11 +12,11 @@ const reader = new FileReader();
 
 // document elements that must be defined in html
 const ecsvFile = document.getElementById("ecsvFile");
-const ecsvDivHeader = document.getElementById("header");
+const ecsvDivConfig = document.getElementById("configuration");
+const ecsvDivInput = document.getElementById("input");
 const ecsvDivOut = document.getElementById("ecsvDivOut");
 
 // document elements createdby clsCSV
-var configDiv = document.createElement('div'); 
 var tableDiv = document.createElement('div');
 
 var ecsv1 = 0;
@@ -65,19 +65,17 @@ class clsCSV {
                 this.data.push(tmp)}
         }
         // Add Config and Table Div
-        configDiv.id = "ecsv-Config"
         tableDiv.id = "ecsv-Table"
-
-        ecsvDivHeader.appendChild(configDiv)
-        ecsvDivHeader.appendChild(tableDiv)
+        
     }
 
     print( mode = "full") {
-      configDiv.innerHTML += this._Table_ConfigDispalay()
-      configDiv.innerHTML += this._Table_ConfigLink()
-      configDiv.innerHTML += this._Table_ConfigImg()
-      ecsvDivOut.innerHTML += this._AsHTMLTable()
-      this._Style_Add_Display("ecsvtable", "table-cell")
+        ecsvDivConfig.innerHTML += this._Table_ConfigDispalay()
+        ecsvDivConfig.innerHTML += this._Table_ConfigLink()
+        ecsvDivConfig.innerHTML += this._Table_ConfigImg()
+        ecsvDivInput.innerHTML += this._innerHTML_Input()
+        ecsvDivOut.innerHTML += this._AsHTMLTable()
+        this._Style_Add_Display("ecsvtable", "table-cell")
     }
 
     _IsValidRow(row) {
@@ -204,28 +202,37 @@ class clsCSV {
       else {
           return '<a href="' + cell.innerText +'"><img src="' + cell.innerText + '" height="80"></a>'}
     }
-  }
 
+  // document elements ##############################################################
+
+    _innerHTML_Input() {
+        return '<div class="form-group"> \n\
+        <label for="comment">Text:</label> \n\
+        <textarea class="form-control" rows="5" id="comment"></textarea> \n\
+        </div>';
+    }
+}
+     
 
   // ###############################################################################
   // Load and Save                                                                 #
   // ###############################################################################
 
-  function download(filename, text) {
-    var pom = document.createElement('a');
-    pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-    pom.setAttribute('download', filename);
-  
-    pom.style.display = 'none';
-    document.body.appendChild(pom);
-  
-    pom.click();
-  
-    document.body.removeChild(pom);
-  }
+    function _download(filename, text) {
+        var pom = document.createElement('a');
+        pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        pom.setAttribute('download', filename);
 
-  function download_save() {
-    let filename = ecsvFile.value.split("\\").slice(-1)[0]
-    let text = ecsv1._AsCSV()
-    download(filename, text)
-  }
+        pom.style.display = 'none';
+        document.body.appendChild(pom);
+
+        pom.click();
+
+        document.body.removeChild(pom);
+    }
+
+    function download_save() {
+        let filename = ecsvFile.value.split("\\").slice(-1)[0]
+        let text = ecsv1._AsCSV()
+        _download(filename, text)
+    }
