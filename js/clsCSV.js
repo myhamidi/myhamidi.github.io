@@ -19,18 +19,16 @@ const ecsvDivOut = document.getElementById("ecsvDivOut");
 // document elements createdby clsCSV
 var tableDiv = document.createElement('div');
 
+// document elements
 var ecsv1 = 0;
 var activeCSV = 0;
+
+// document elements status
+var divID_high = "";
 
 // ################################################################
 // Event when loading file                                        #
 // ################################################################
-
-ecsvFile.onchange = () => {
-  activeCSV = 1;
-  ReadFile(ecsvFile.files[0])
-}
-
 
 function ReadFile (file) {
     // reader.addEventListener("load", Load);
@@ -38,16 +36,27 @@ function ReadFile (file) {
     reader.readAsText(file);
   }
 
-function Load() {
-    // things that shall happen when reader is loaded
-  }
-
 function CreateNewECSV() {
     ecsv1 = new clsCSV(reader.result);
+    window.addEventListener('click', windowClick)
     ecsv1.print();
     // eval("ecsv" + activeCSV + " = new clsCSV(reader.result)") case formultiple
   }
 
+function Load() {
+    // things that shall happen when reader is loaded
+  }
+
+const windowClick = (event) => {
+    console.log(event.srcElement.id);
+    ecsv1._div_toggle_highlight(event.srcElement.id);
+  }
+
+ecsvFile.onchange = () => {
+    activeCSV = 1;
+    ReadFile(ecsvFile.files[0])
+    }
+  
 // ################################################################
 // class definition                                               #
 // ################################################################
@@ -98,13 +107,15 @@ class clsCSV {
         //row body
         ret += '<tbody>'
         //rows
+        var rowidx = 0;
         for (let row of this.data) {
-          var i = -1;
-          ret += '<tr>';
-          for (let cell of row) {
-            i += 1;
-            ret += '<td class="ecsvtable col-' + this.headers[i] + ' ecsvcell">' + cell + '</td>'
-          }
+            rowidx += 1;
+            var i = -1;
+            ret += '<tr>';
+            for (let cell of row) {
+                i += 1;
+                ret += '<td id="R:' + rowidx + 'C:' + this.headers[i] + '" class="ecsvtable col-' + this.headers[i] + ' ecsvcell">' + cell + '</td>'
+            }
           ret += '</tr>'
         }
         // row body end
@@ -203,7 +214,8 @@ class clsCSV {
           return '<a href="' + cell.innerText +'"><img src="' + cell.innerText + '" height="80"></a>'}
     }
 
-  // document elements ##############################################################
+    // document elements innerHTML 
+    // ###############################################################################
 
     _innerHTML_Input() {
         return '<div class="form-group"> \n\
@@ -211,9 +223,21 @@ class clsCSV {
         <textarea class="form-control" rows="5" id="comment"></textarea> \n\
         </div>';
     }
-}
-     
 
+    // document elements highlighting 
+    // ###############################################################################
+    _div_toggle_highlight(divID) {
+        let d = 0;
+        if (divID.includes("R:") && divID.includes("C:")) {
+            if (divID_high != '') {
+                d = document.getElementById(divID_high)
+                d.classList.remove("table-info");}
+            divID_high = divID;
+            d = document.getElementById(divID_high);
+            d.classList.add("table-info");
+        }
+    }
+}
   // ###############################################################################
   // Load and Save                                                                 #
   // ###############################################################################
