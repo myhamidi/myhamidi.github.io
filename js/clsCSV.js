@@ -10,8 +10,14 @@
 // ################################################################
 const reader = new FileReader();
 
+// document elements that must be defined in html
 const ecsvFile = document.getElementById("ecsvFile");
+const ecsvDivHeader = document.getElementById("header");
 const ecsvDivOut = document.getElementById("ecsvDivOut");
+
+// document elements createdby clsCSV
+var configDiv = document.createElement('div'); 
+var tableDiv = document.createElement('div');
 
 var ecsv1 = 0;
 var activeCSV = 0;
@@ -59,19 +65,17 @@ class clsCSV {
                 this.data.push(tmp)}
         }
         // Add Config and Table Div
-        let configDiv = document.createElement('div');
         configDiv.id = "ecsv-Config"
-        let tableDiv = document.createElement('div');
         tableDiv.id = "ecsv-Table"
 
-        ecsvDivOut.appendChild(configDiv)
-        ecsvDivOut.appendChild(tableDiv)
+        ecsvDivHeader.appendChild(configDiv)
+        ecsvDivHeader.appendChild(tableDiv)
     }
 
     print( mode = "full") {
-      ecsvDivOut.innerHTML += this._Table_ConfigDispalay()
-      ecsvDivOut.innerHTML += this._Table_ConfigLink()
-      ecsvDivOut.innerHTML += this._Table_ConfigImg()
+      configDiv.innerHTML += this._Table_ConfigDispalay()
+      configDiv.innerHTML += this._Table_ConfigLink()
+      configDiv.innerHTML += this._Table_ConfigImg()
       ecsvDivOut.innerHTML += this._AsHTMLTable()
       this._Style_Add_Display("ecsvtable", "table-cell")
     }
