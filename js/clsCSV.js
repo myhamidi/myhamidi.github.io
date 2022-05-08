@@ -43,6 +43,7 @@ function CreateNewECSV() {
     ecsv1 = new clsCSV(reader.result);
     window.addEventListener('click', windowClick)
     ecsv1.print();
+    ecsv1.InitConfig();
     // eval("ecsv" + activeCSV + " = new clsCSV(reader.result)") case formultiple
   }
 
@@ -70,12 +71,27 @@ class clsCSV {
         var str = csvtext.replace(new RegExp('\r\n', "g") , '\n')
         this.headers = str.slice(0, str.indexOf("\n")).split(delimiter);
         this.data = [];
+        this.config = [];
         const rows = str.slice(str.indexOf("\n") + 1).split("\n");
         for (let row of rows) {
             if (this._IsValidRow(row)) {
                 let tmp = row.split(delimiter)
                 this.data.push(tmp)}
         }
+
+        if (this._IsConfigRow(this.data.slice(-1)[0])) {
+            let configECSV = this.data.slice(-1)[0]
+            for (let i = 0; i< configECSV.length; i++) {
+                configECSV[i] = RetStringBetween(configECSV[i], "ecsvConfig:")
+                this.config.push(configECSV[i])
+                }
+            this.data.pop()
+        } else {
+            for (let i = 0; i< this.headers.length; i++) {
+                this.config.push("ecsvConfig:d-tablecell")
+                }
+        }
+        
         // Add Config and Table Div
         tableDiv.id = "ecsv-Table"
         
@@ -94,6 +110,27 @@ class clsCSV {
       if (row == "") {
         return false}
       return true;
+    }
+
+    _IsConfigRow(dataRow) {
+        let ret = true
+        if (dataRow.length == this.headers.length && Array.isArray(dataRow)) {
+            for (let item of dataRow) {
+                if (item.substring(0,11) != "ecsvConfig:") {
+                    ret = false}
+            } 
+        } else {
+            ret = false}
+        return ret;
+    }
+
+    InitConfig() {
+        // display
+        for (let i = 0; i < this.config.length; i++) {
+            if (this.config[i] == "d-none") {
+                this._Table_ToggleCol("col-" + this.headers[i])
+            }
+        }
     }
 
     _AsHTMLTable() {
@@ -140,11 +177,21 @@ class clsCSV {
         for (let row of this.data) {
             for (let cell of row) {
                 ret += cell + ';'}
-            ret = ret.slice(0, -1)
+            ret = ret.slice(0, -1) // remove last seperator. open: length of seperator
             ret += "\n"
         }
         return ret;
   }
+
+    _ConfigAsCSVRow(sep = ";") {
+        let ret = '';
+        //row
+        for (let cell of this.config) {
+            ret += cell + ';'}
+        ret = ret.slice(0, -1)// remove last seperator. open: length of seperator
+        ret += "\n"
+        return ret;
+    }
 
     _Table_ConfigDispalay() {
       let ret = 'Show/Hide: ';
@@ -171,13 +218,16 @@ class clsCSV {
     }
 
     _Table_ToggleCol(colname) {
-      var cols = document.getElementsByClassName(colname);
-      for (let col of cols) {
-          if (col.style.display === "table-cell") {
-            col.style.display = "none";
-          } else {
-            col.style.display = "table-cell";
-          }
+        var cells = document.getElementsByClassName(colname);
+        let idx = this.headers.indexOf(RetStringBetween(colname, "col-"))
+        for (let cell of cells) {
+            if (cell.style.display === "table-cell") {
+                this.config[idx] = "ecsvConfig:d-none"
+                cell.style.display = "none";
+            } else {
+                this.config[idx] = "ecsvConfig:d-tablecell"
+                cell.style.display = "table-cell";
+            }
         }
     }
 
@@ -231,6 +281,9 @@ class clsCSV {
     // ###############################################################################
     _div_toggle_highlight(divID) {
         let d = 0;
+        if (divID.includes("Text") || divID.includes("nput")) {
+            return
+        }
         if (divID.includes("R:") && divID.includes("C:")) {
             if (divID_high != '') {
                 d = document.getElementById(divID_high)
@@ -262,10 +315,21 @@ class clsCSV {
         document.body.removeChild(pom);
     }
 
-    function download_save() {
+    function download_saveAll() {
+        let filename = ecsvFile.value.split("\\").slice(-1)[0]
+        let text = ecsv1._AsCSV()
+        text += ecsv1._ConfigAsCSVRow()
+        _download(filename, text)
+    }
+
+    function download_saveData() {
         let filename = ecsvFile.value.split("\\").slice(-1)[0]
         let text = ecsv1._AsCSV()
         _download(filename, text)
+    }
+
+    function download_saveConfig() {
+        alert("funtion not yet implemented")
     }
 
     function text_save() {
@@ -281,24 +345,21 @@ class clsCSV {
   // ###############################################################################
 
 
-  function RetStringBetween(text, fromStr, toStr = "") {
+function RetStringBetween(text, fromStr, toStr = "") {
     /**
      * Returns the String between two  strings.
      * 
      */
-     var idx1 = text.indexOf(fromStr);
-     if (idx1 > -1) {
-         if (toStr != "") {
+    var idx1 = text.indexOf(fromStr);
+    if (idx1 > -1) {
+        if (toStr != "") {
             var idx2 = text.indexOf(toStr, fromIndex = idx1);
             if (idx2 > idx1) {
                 return text.substring(idx1+fromStr.length, idx2);}
-             }
-         } else {
-            return text.substring(idx1+fromStr.length)
-         }
-         
-
-     return "";
+            } else {
+            return text.substring(idx1+fromStr.length)}
+    }
+    return "";
 }
 
 function RetStringOutside(text, fromStr, toStr) {
