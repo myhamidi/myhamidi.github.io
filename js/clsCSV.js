@@ -16,7 +16,7 @@ const ecsvDivConfig = document.getElementById("configuration");
 const ecsvDivInput = document.getElementById("input");
 const ecsvDivOut = document.getElementById("ecsvDivOut");
 
-// document elements createdby clsCSV
+// document elements created by clsCSV
 var tableDiv = document.createElement('div');
 
 // document elements
@@ -25,6 +25,9 @@ var activeCSV = 0;
 
 // document elements status
 var divID_high = "";
+
+// eCSV variables
+var eText = ""; // value in input element
 
 // ################################################################
 // Event when loading file                                        #
@@ -107,14 +110,14 @@ class clsCSV {
         //row body
         ret += '<tbody>'
         //rows
-        var rowidx = 0;
+        var rowidx = -1;
         for (let row of this.data) {
             rowidx += 1;
             var i = -1;
             ret += '<tr>';
             for (let cell of row) {
                 i += 1;
-                ret += '<td id="R:' + rowidx + 'C:' + this.headers[i] + '" class="ecsvtable col-' + this.headers[i] + ' ecsvcell">' + cell + '</td>'
+                ret += '<td id="R:' + rowidx + 'C:' + i + 'H:' + this.headers[i] + '" class="ecsvtable col-' + this.headers[i] + ' ecsvcell">' + cell + '</td>'
             }
           ret += '</tr>'
         }
@@ -219,8 +222,8 @@ class clsCSV {
 
     _innerHTML_Input() {
         return '<div class="form-group"> \n\
-        <label for="comment">Text:</label> \n\
-        <textarea class="form-control" rows="5" id="comment"></textarea> \n\
+        <a id="idSaveText" class="btn btn-outline-primary my-2 my-sm-0" type="submit" onclick="text_save()"> Save </a>\n\
+        <textarea class="form-control" rows="5" id="idText"></textarea> \n\
         </div>';
     }
 
@@ -235,6 +238,10 @@ class clsCSV {
             divID_high = divID;
             d = document.getElementById(divID_high);
             d.classList.add("table-info");
+        } else {
+            if (divID_high != '') {
+                d = document.getElementById(divID_high)
+                d.classList.remove("table-info");}
         }
     }
 }
@@ -260,3 +267,50 @@ class clsCSV {
         let text = ecsv1._AsCSV()
         _download(filename, text)
     }
+
+    function text_save() {
+      let newText = document.getElementById("idText").value;
+      let row = RetStringBetween(divID_high,"R:", "C:");
+      let col = RetStringBetween(divID_high,"C:", "H:");
+      ecsv1.data[row][col] = newText;
+      let divH = document.getElementById(divID_high).innerText = newText;
+  }
+
+  // ###############################################################################
+  // Basis                                                                         #
+  // ###############################################################################
+
+
+  function RetStringBetween(text, fromStr, toStr = "") {
+    /**
+     * Returns the String between two  strings.
+     * 
+     */
+     var idx1 = text.indexOf(fromStr);
+     if (idx1 > -1) {
+         if (toStr != "") {
+            var idx2 = text.indexOf(toStr, fromIndex = idx1);
+            if (idx2 > idx1) {
+                return text.substring(idx1+fromStr.length, idx2);}
+             }
+         } else {
+            return text.substring(idx1+fromStr.length)
+         }
+         
+
+     return "";
+}
+
+function RetStringOutside(text, fromStr, toStr) {
+    /**
+     * Returns the String except the text between two  strings.
+     * 
+     */
+     var idx1 = text.indexOf(fromStr);
+     if (idx1 > -1) {
+         var idx2 = text.indexOf(toStr, fromIndex = idx1);
+         if (idx2 > idx1) {
+            return text.substring(0, idx1) + text.substring(idx2 + toStr.length);}
+         }
+     return "";
+}
