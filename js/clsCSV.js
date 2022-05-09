@@ -257,7 +257,7 @@ class clsCSV {
         if (cell.innerHTML.includes("<a href=")){
             return cell.innerText}
         else {
-            return '<a href="' + cell.innerText +'">' + cell.innerText + '</a>'}
+            return '<a href="' + cell.innerText +'" target = "#">' + cell.innerText + '</a>'}
     }
 
     _InnerHTML_ToggleToLImg(cell) {
@@ -267,8 +267,7 @@ class clsCSV {
           return '<a href="' + cell.innerText +'"><img src="' + cell.innerText + '" height="80"></a>'}
     }
 
-    // document elements innerHTML 
-    // ###############################################################################
+    // document elements innerHTML ################################################
 
     _innerHTML_Input() {
         return '<div class="form-group"> \n\
@@ -277,8 +276,8 @@ class clsCSV {
         </div>';
     }
 
-    // document elements highlighting 
-    // ###############################################################################
+    // document elements highlighting ################################################
+
     _div_toggle_highlight(divID) {
         let d = 0;
         if (divID.includes("Text") || divID.includes("nput")) {
@@ -298,51 +297,62 @@ class clsCSV {
         }
     }
 }
-  // ###############################################################################
-  // Load and Save                                                                 #
-  // ###############################################################################
 
-    function _download(filename, text) {
-        var pom = document.createElement('a');
-        pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-        pom.setAttribute('download', filename);
+// ###############################################################################
+// Load and Save                                                                 #
+// ###############################################################################
 
-        pom.style.display = 'none';
-        document.body.appendChild(pom);
+function _download(filename, text) {
+    var pom = document.createElement('a');
+    pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    pom.setAttribute('download', filename);
 
-        pom.click();
+    pom.style.display = 'none';
+    document.body.appendChild(pom);
 
-        document.body.removeChild(pom);
+    pom.click();
+
+    document.body.removeChild(pom);
+}
+
+function download_saveAll() {
+    let filename = ecsvFile.value.split("\\").slice(-1)[0]
+    let text = ecsv1._AsCSV()
+    text += ecsv1._ConfigAsCSVRow()
+    _download(filename, text)
+}
+
+function download_saveData() {
+    let filename = ecsvFile.value.split("\\").slice(-1)[0]
+    let text = ecsv1._AsCSV()
+    _download(filename, text)
+}
+
+function download_saveConfig() {
+    alert("funtion not yet implemented")
+}
+
+function text_save() {
+    let newText = document.getElementById("idText").value;
+    let row = RetStringBetween(divID_high,"R:", "C:");
+    let col = RetStringBetween(divID_high,"C:", "H:");
+    ecsv1.data[row][col] = newText;
+    let divH = document.getElementById(divID_high).innerText = newText;
+}
+
+function new_row() {
+    let newRow = [];
+    for (i = 0; i < ecsv1.headers.length; i++) {
+        newRow.push('');
     }
+    ecsv1.data.push(newRow)
+    ecsvDivOut.innerHTML = ecsv1._AsHTMLTable()
+}
 
-    function download_saveAll() {
-        let filename = ecsvFile.value.split("\\").slice(-1)[0]
-        let text = ecsv1._AsCSV()
-        text += ecsv1._ConfigAsCSVRow()
-        _download(filename, text)
-    }
 
-    function download_saveData() {
-        let filename = ecsvFile.value.split("\\").slice(-1)[0]
-        let text = ecsv1._AsCSV()
-        _download(filename, text)
-    }
-
-    function download_saveConfig() {
-        alert("funtion not yet implemented")
-    }
-
-    function text_save() {
-      let newText = document.getElementById("idText").value;
-      let row = RetStringBetween(divID_high,"R:", "C:");
-      let col = RetStringBetween(divID_high,"C:", "H:");
-      ecsv1.data[row][col] = newText;
-      let divH = document.getElementById(divID_high).innerText = newText;
-  }
-
-  // ###############################################################################
-  // Basis                                                                         #
-  // ###############################################################################
+// ###############################################################################
+// Basis                                                                         #
+// ###############################################################################
 
 
 function RetStringBetween(text, fromStr, toStr = "") {
